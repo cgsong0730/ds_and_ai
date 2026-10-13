@@ -26,3 +26,11 @@ conda install plotly
 
 D2Coding: 
 https://github.com/naver/d2-coding-font/releases
+
+## Initialization for conda command
+
+Anaconda Prompt에서 다음 명령어 실행
+
+```
+conda init powershell
+```
