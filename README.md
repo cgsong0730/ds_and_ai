@@ -21,3 +21,8 @@ conda install matplotlib
 conda install seaborn
 conda install plotly
 ```
+
+## Installing the font
+
+D2Coding: 
+https://github.com/naver/d2-coding-font/releases
