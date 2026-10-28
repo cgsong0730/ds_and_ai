@@ -22,6 +22,14 @@ conda install seaborn
 conda install plotly
 ```
 
+### Chapter 6
+
+```
+conda install scikit-learn
+```
+
+
+
 ## Installing the font
 
 D2Coding: 
