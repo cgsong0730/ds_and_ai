@@ -15,3 +15,4 @@ for k in [1, 3, 5, 11, 21, 51]: # 이웃의 수 K
     knn.fit(X_train, y_train)
     print(k, round(knn.score(X_train, y_train), 3),
     round(knn.score(X_test, y_test), 3))
+    
