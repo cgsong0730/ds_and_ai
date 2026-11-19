@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 
 # 6장 타이타닉 데이터 준비 (피쳐 4개)
 url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+
 df = pd.read_csv(url)
 df["Age"] = df["Age"].fillna(df["Age"].median())     # 결측치: 중앙값으로 채움
 df["Sex"] = df["Sex"].map({"male": 0, "female": 1})  # 문자 → 숫자
