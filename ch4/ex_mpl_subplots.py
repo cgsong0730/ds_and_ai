@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 plt.rcParams['font.family'] = 'D2Coding'
+
 titanic = sns.load_dataset('titanic')
 fig, axes = plt.subplots(1, 2, figsize=(8, 3))
 
