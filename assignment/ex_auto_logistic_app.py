@@ -6,6 +6,7 @@ import pandas as pd
 
 
 MODEL_PATH = Path(__file__).resolve().parent.parent / "models" / "auto_mpg_model.joblib"
+DATASET_PATH = Path(__file__).resolve().parent.parent / "dataset" / "auto-mpg.data"
 
 
 def read_number(prompt, minimum, maximum, allowed_values=None):
@@ -32,6 +33,16 @@ def main():
         )
 
     model = joblib.load(MODEL_PATH)
+    if not DATASET_PATH.is_file():
+        raise SystemExit(f"연비 비교용 데이터 파일이 없습니다: {DATASET_PATH}")
+    dataset = pd.read_csv(
+        DATASET_PATH, sep=r"\s+", header=None, usecols=range(8), na_values="?"
+    )
+    dataset = dataset.apply(pd.to_numeric, errors="coerce").dropna()
+    if dataset.empty:
+        raise SystemExit("연비 비교에 사용할 유효한 데이터가 없습니다.")
+    average_mpg = dataset[0].mean()
+
     print("<연비 계산기>")
     print("자동차 정보를 입력해 주세요. 입력 범위는 결측치를 제외한 데이터셋 기준입니다.")
     print("학습 데이터는 1970~1982년 자동차이므로 다른 시대의 차량에는 적합하지 않을 수 있습니다.")
@@ -57,10 +68,30 @@ def main():
             1, 3, (1, 2, 3),
         ),
     }
+    monthly_distance = read_number("월 주행거리 (km, 0~1000000): ", 0, 1000000)
+    fuel_price = read_number("유가 (원/L, 0~1000000): ", 0, 1000000)
 
     new_car = pd.DataFrame([car])
     mpg = model.predict(new_car)[0]
-    print(f"예상 연비: {mpg:.2f} mpg (약 {mpg * 0.425144:.2f} km/L)")
+    km_per_liter = mpg * 0.425144
+    print(f"예상 연비: {mpg:.2f} mpg (약 {km_per_liter:.2f} km/L)")
+    if not math.isfinite(mpg) or mpg <= 0:
+        print("예상 연비가 유효하지 않아 월 주유비와 연비 우수성을 계산할 수 없습니다.")
+        return
+
+    monthly_cost = monthly_distance / km_per_liter * fuel_price
+    print(f"예상 월 주유비: {monthly_cost:,.0f}원")
+    if mpg > average_mpg:
+        comparison = "평균보다 우수"
+    elif mpg < average_mpg:
+        comparison = "평균보다 낮음"
+    else:
+        comparison = "평균과 같음"
+    print(
+        f"연비 우수성: {comparison} "
+        f"(학습 데이터 전체 평균 {average_mpg:.2f} mpg, "
+        f"약 {average_mpg * 0.425144:.2f} km/L)"
+    )
 
 
 if __name__ == "__main__":
